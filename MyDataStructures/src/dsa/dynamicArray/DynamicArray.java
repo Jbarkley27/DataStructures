@@ -1,15 +1,16 @@
 package dsa.dynamicArray;
 
-public class DynamicArray {
+public class DynamicArray<E> {
 	
-	int size;
-	int cap;
-	int[] list;
+	private int size;
+	private int cap;
+	private E[] list;
 	
+	@SuppressWarnings("unchecked")
 	public DynamicArray() {
-		list = new int[cap];
 		setSize(0);
 		setCap(4);
+		list = (E[]) (new Object[cap]);
 	}
 
 	/**
@@ -40,7 +41,7 @@ public class DynamicArray {
 		this.cap = cap;
 	}
 	
-	public int get(int index) {
+	public E get(int index) {
 		if ( index >= this.getSize() || index < 0) {
 			throw new IllegalArgumentException();
 		}
@@ -49,25 +50,96 @@ public class DynamicArray {
 		
 	}
 	
-	public void addLast(int element) {
+	public void addLast(E element) {
 		
 		this.ensureCap(this.getSize() + 1);
-		this.list[this.getSize()] = element;
+		list[this.getSize()] = element;
 		
 		size++;
 		
 	}
 	
+	public void add(int idx, E element) {
+		this.ensureCap(this.getSize() + 1);
+		
+		if ( idx >= this.getSize() || idx < 0) {
+			throw new IllegalArgumentException();
+		}
+		
+		
+		
+		for( int i = this.getSize(); i > idx; i--) {
+			this.list[i] = this.list[i - 1];
+			
+		}
+		
+		this.list[idx] = element;
+		size++;
+		
+	}
+	
+	
+	public E set(int idx, E element) {
+		if(idx < 0 || idx >= this.getSize()) {
+			throw new IllegalArgumentException();
+		}
+		
+		E rmv = this.list[idx];
+		
+		this.list[idx] = element;
+		
+		return rmv;
+		
+	}
+	public E remove(int idx) {
+		
+		E rmv = this.list[idx];
+		
+		if ( idx >= this.getSize() || idx < 0) {
+			throw new IllegalArgumentException();
+		}
+		
+		for( int i = idx; i < this.getSize(); i++) {
+			this.list[i] = this.list[i + 1];
+		}
+		
+		this.list[this.getSize() - 1] = null;
+		
+		size--;
+		
+		return rmv;
+	}
+	
+	
+	
 	public void ensureCap(int cap) {
-		if (cap >= this.getCap()) {
-			int[] list2 = new int[this.getCap() * 2];
+		if (this.getSize() >= this.getCap()) {
+			@SuppressWarnings("unchecked")
+			E[] list2 = (E[]) (new Object[this.getCap() * 2]);
 			for( int i = 0; i < this.getSize(); i++) {
+				
 				list2[i] = this.get(i);
 			}
 			
 			this.setCap(this.getCap() * 2);
 			
+			this.list = list2;
+			
 		}
+	}
+	
+	public void display() {
+		for(int i = 0; i < this.getSize(); i++) {
+			
+			if( i == this.getSize() - 1) {
+				System.out.print(this.get(i));
+			} else {
+				System.out.print(this.get(i) + " --> ");
+			}
+		}
+		
+		System.out.print("\n");
+		
 	}
 
 }
